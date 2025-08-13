@@ -33,28 +33,40 @@ const pixelMatrix =
     
   
 ];
-const canvas = document.getElementById('dotMatrix'); // Fixed ID
+const canvas = document.getElementById('dotMatrix');
 const ctx = canvas.getContext('2d');
 
-const pixelSize = 20; // Size of each pixel square
+// Make canvas fill the screen
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  drawMatrix(pixelMatrix);
+});
+
+function getPixelSize() {
+  return Math.min(
+    canvas.width / pixelMatrix[0].length,
+    canvas.height / pixelMatrix.length
+  );
+}
 
 function drawMatrix(matrix) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const radius = pixelSize / 2; // half the pixel size for perfect circles
+  const pixelSize = getPixelSize();
+  const radius = pixelSize / 2;
   for (let y = 0; y < matrix.length; y++) {
     for (let x = 0; x < matrix[y].length; x++) {
       ctx.beginPath();
       const centerX = x * pixelSize + radius;
       const centerY = y * pixelSize + radius;
 
-      if (matrix[y][x] === 1) {
-        ctx.fillStyle = 'blue'; // black filled circle
-      } else {
-        ctx.fillStyle = 'grey'; // white background circle
-      }
-
-      ctx.arc(centerX, centerY, radius * 0.8, 0, Math.PI * 2); // slightly smaller radius for padding
+      ctx.fillStyle = matrix[y][x] === 1 ? 'blue' : 'grey';
+      ctx.arc(centerX, centerY, radius * 0.8, 0, Math.PI * 2);
       ctx.fill();
       ctx.closePath();
     }
